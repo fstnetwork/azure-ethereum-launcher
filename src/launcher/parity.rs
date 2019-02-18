@@ -131,6 +131,16 @@ pub fn create_spec_file(
             "minGasLimit":          "0x1388",
             "gasLimitBoundDivisor": "0x400",
             "networkID":  format!("0x{:x}", network_id),
+            "eip155Transition": 0,
+            "maxCodeSize": 24576,
+            "maxCodeSizeTransition": 0,
+            "validateChainIdTransition": 0,
+            "validateReceiptsTransition": 0,
+            "eip140Transition": 0,
+            "eip211Transition": 0,
+            "eip214Transition": 0,
+            "eip658Transition": 0,
+            "wasmActivationTransition": 0
         },
         "engine": engine,
         "accounts": {
