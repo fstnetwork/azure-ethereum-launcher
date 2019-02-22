@@ -227,6 +227,7 @@ pub fn create_reserverd_peers_file(
 
 #[derive(Debug, Clone)]
 pub struct ParityConfig {
+    pub db_path: String,
     pub node_type: NodeType,
 
     pub identity: String,
@@ -235,6 +236,7 @@ pub struct ParityConfig {
     pub bootnodes: Vec<EthereumNodeUrl>,
     pub reserved_peers_file_path: String,
 
+    pub force_sealing: bool,
     pub sealer_address: Address,
     pub sealer_passphrase_file_path: String,
 
@@ -246,12 +248,14 @@ pub struct ParityConfig {
 
 impl ParityConfig {
     pub fn toml_config(&self) -> toml::Value {
+        let db_path = self.db_path.clone();
         let chain = self.spec_path.clone();
         let identity = self.identity.clone();
         let (engine_signer, author, unlock) = {
             let engine_signer = format!("{:x?}", self.sealer_address);
             (engine_signer.clone(), engine_signer.clone(), engine_signer)
         };
+        let force_sealing = self.force_sealing;
 
         let password = self.sealer_passphrase_file_path.clone();
         let bootnodes: Vec<_> = self
@@ -269,6 +273,7 @@ impl ParityConfig {
             NodeType::Miner { .. } => {
                 toml! {
                     [parity]
+                    db_path = db_path
                     chain = chain
                     identity = identity
                     no_persistent_txqueue = false
@@ -290,19 +295,20 @@ impl ParityConfig {
                     engine_signer = engine_signer
                     reseal_on_txs = "none"
                     usd_per_tx = "0"
+                    force_sealing = force_sealing
 
                     [websockets]
                     interface = "0.0.0.0"
                     port = websocket_jsonrpc_port
                     hosts = ["all"]
-                    apis = ["eth", "net", "parity"]
-                    origins = ["http://127.0.0.1:8180", "http://127.0.0.1:8181", "http://127.0.0.1:8182"]
+                    apis = ["eth", "net", "parity", "web3"]
+                    origins = ["all"]
 
                     [rpc]
                     interface = "0.0.0.0"
                     port = http_jsonrpc_port
                     hosts = ["all"]
-                    apis = ["eth", "net", "parity"]
+                    apis = ["eth", "net", "parity", "web3"]
 
                     [ipc]
                     disable = false
@@ -310,7 +316,7 @@ impl ParityConfig {
                     apis = ["all"]
 
                     [misc]
-                    logging = "network=warn,miner=warn,mode=warn"
+                    logging = "network=info,miner=info,mode=info"
                     color = true
                 }
             }
@@ -333,14 +339,14 @@ impl ParityConfig {
                     interface = "0.0.0.0"
                     port = websocket_jsonrpc_port
                     hosts = ["all"]
-                    apis = ["eth", "net", "parity"]
-                    origins = ["http://127.0.0.1:8180", "http://127.0.0.1:8181", "http://127.0.0.1:8182"]
+                    apis = ["eth", "net", "parity", "web3"]
+                    origins = ["all"]
 
                     [rpc]
                     interface = "0.0.0.0"
                     port = http_jsonrpc_port
                     hosts = ["all"]
-                    apis = ["eth", "net", "parity"]
+                    apis = ["eth", "net", "parity", "web3"]
 
                     [ipc]
                     disable = false
@@ -348,7 +354,7 @@ impl ParityConfig {
                     apis = ["all"]
 
                     [misc]
-                    logging = "network=warn,miner=warn,mode=warn"
+                    logging = "network=info,miner=info,mode=info"
                     color = true
                 }
             }

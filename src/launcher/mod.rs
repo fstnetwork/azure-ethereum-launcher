@@ -22,6 +22,10 @@ pub struct EthereumLauncher {
 }
 
 impl EthereumLauncher {
+    pub fn chain_data_dir_path(&self) -> PathBuf {
+        PathBuf::from(std::env::var("CHAIN_DATA_ROOT").unwrap_or("/chain-data".into()))
+    }
+
     pub fn config_dir_path(&self) -> PathBuf {
         let mut path = PathBuf::from(std::env::var("CONFIG_ROOT").unwrap_or("/".into()));
         path.push(match self.engine.program() {
@@ -62,6 +66,9 @@ impl EthereumLauncher {
                 let config_dir = self.config_dir_path();
                 std::fs::create_dir_all(config_dir.clone())?;
 
+                let db_path = self.chain_data_dir_path();
+                std::fs::create_dir_all(db_path.clone())?;
+
                 let passphrase = String::from(DEFAULT_SEALER_KEYFILE_PASSPHRASE);
 
                 let sealer_key_pair = self
@@ -92,6 +99,7 @@ impl EthereumLauncher {
 
                 let config_file_path: String = {
                     let config = parity::ParityConfig {
+                        db_path: db_path.to_str().expect("db directory path").to_owned(),
                         node_type: self.node_type.clone(),
 
                         identity: format!("miner-{}", index),
@@ -101,6 +109,7 @@ impl EthereumLauncher {
                             .to_str()
                             .expect("reserved peers file")
                             .to_owned(),
+                        force_sealing: true,
                         sealer_address: sealer_key_pair.address(),
                         sealer_passphrase_file_path: sealer_password_file_path
                             .to_str()
@@ -132,6 +141,9 @@ impl EthereumLauncher {
                 let config_dir = self.config_dir_path();
                 std::fs::create_dir_all(config_dir.clone())?;
 
+                let db_path = self.chain_data_dir_path();
+                std::fs::create_dir_all(db_path.clone())?;
+
                 let spec_file_path = parity::create_spec_file(
                     &config_dir,
                     &self.engine,
@@ -150,6 +162,7 @@ impl EthereumLauncher {
 
                 let config_file_path: String = {
                     let config = parity::ParityConfig {
+                        db_path: db_path.to_str().expect("db directory path").to_owned(),
                         node_type: self.node_type.clone(),
 
                         identity: "transactor".into(),
@@ -159,6 +172,8 @@ impl EthereumLauncher {
                             .to_str()
                             .expect("reserved peers file")
                             .to_owned(),
+
+                        force_sealing: false,
                         sealer_address: fake_sealer.address(),
                         sealer_passphrase_file_path: parity::create_sealer_passphrase_file(
                             &config_dir,

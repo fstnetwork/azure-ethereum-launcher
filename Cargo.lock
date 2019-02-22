@@ -651,7 +651,7 @@ dependencies = [
 
 [[package]]
 name = "ethereum-launcher"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "emerald-rs 0.25.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "env_logger 0.6.0 (registry+https://github.com/rust-lang/crates.io-index)",

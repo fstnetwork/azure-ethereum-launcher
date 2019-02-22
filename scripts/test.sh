@@ -3,9 +3,9 @@
 # WARN: make sure you execute this script in root directory of project
 cargo build
 
-CONFIG_ROOT_PREFIX="/tmp/ethereum-launcher-test"
+ROOT_PREFIX="/tmp/ethereum-launcher-test"
 
-mkdir -p $CONFIG_ROOT_PREFIX
+mkdir -p $ROOT_PREFIX
 
 export NETWORK_NAME="Parity-Aura"
 export SEALER_MASTER_SEED="rose rocket invest real refuse margin festival danger anger border idle brown"
@@ -32,7 +32,8 @@ for ((i = 0; i < $MINER_COUNT; i++)); do
     export HTTP_JSON_RPC_PORT=$(($i + 8545))
     export WEBSOCKET_JSON_RPC_PORT=$(($i + 18546))
 
-    export CONFIG_ROOT="$CONFIG_ROOT_PREFIX/miner-$MINER_INDEX"
+    export CHAIN_DATA_ROOT="$ROOT_PREFIX/miner-$MINER_INDEX/chain-data"
+    export CONFIG_ROOT="$ROOT_PREFIX/miner-$MINER_INDEX"
     export XDG_CONFIG_HOME=$CONFIG_ROOT/config
     export XDG_DATA_HOME=$CONFIG_ROOT/data
     export HOME=$CONFIG_ROOT
@@ -53,7 +54,8 @@ for ((i = 0; i < $TRANSACTOR_COUNT; i++)); do
     export HTTP_JSON_RPC_PORT=$(($i + 28545))
     export WEBSOCKET_JSON_RPC_PORT=$(($i + 38546))
 
-    export CONFIG_ROOT="$CONFIG_ROOT_PREFIX/transactor-$TRANSACTOR_INDEX"
+    export CHAIN_DATA_ROOT="$ROOT_PREFIX/transactor-$TRANSACTOR_INDEX/chain-data"
+    export CONFIG_ROOT="$ROOT_PREFIX/transactor-$TRANSACTOR_INDEX"
     export XDG_CONFIG_HOME=$CONFIG_ROOT/config
     export XDG_DATA_HOME=$CONFIG_ROOT/data
     export HOME=$CONFIG_ROOT
